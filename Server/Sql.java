@@ -21,7 +21,7 @@ public class Sql {
 	
 	public void createPicturesTableForTheUser(User user) {
 		
-		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(album VARCHAR(255) NULL,picture LONGBLOB NULL,description VARCHAR(255) NULL, date VARCHAR(255) NULL);";
+		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(album VARCHAR(255) NULL,picture LONGBLOB NULL,date VARCHAR(255) NULL);";
 		
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlCreateTable);
