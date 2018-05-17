@@ -18,6 +18,26 @@ public class Sql {
 	
 	
 	
+	
+	public void createPicturesTableForTheUser(User user) {
+		
+		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(album VARCHAR(255) NULL,picture LONGBLOB NULL,description VARCHAR(255) NULL, date VARCHAR(255) NULL);";
+		
+		try {
+			PreparedStatement pst = connect.prepareStatement(sqlCreateTable);
+
+			pst.execute();
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
 	public User getUserData(String email) {
 		
 		User user = new User();
@@ -144,7 +164,8 @@ public class Sql {
 	
 			
 			pst.execute();
-			
+			createPicturesTableForTheUser(user);
+
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -153,7 +174,7 @@ public class Sql {
 			
 		}
 		
-		return "3"; 
+		return "3";
 		
 	}
 	
