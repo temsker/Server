@@ -6,9 +6,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import com.mysql.jdbc.Connection;
 import com.tekapic.Login;
+import com.tekapic.Picture;
 import com.tekapic.User;
 
 
@@ -16,7 +19,55 @@ public class Sql {
 
 	private  Connection connect;
 	
-	
+	public void storePictureInUserTable(String email, Picture picture) {
+		
+		String username = "none";
+		ArrayList<String> albums = new ArrayList<String>();
+		
+		
+		//get the username
+		try {
+			
+			PreparedStatement statement = connect.prepareStatement("SELECT username  FROM users WHERE email = '" + email  + "';");                        
+
+			ResultSet result = statement.executeQuery();
+			
+			while(result.next())
+			{
+			   username = result.getString(1);
+				
+			}
+			
+		
+		//save the picture object in table user 
+		
+		String sqlInsert = "INSERT INTO " + username + " (album, picture, date) values (?,?,?)";
+		
+		
+			PreparedStatement pst = connect.prepareStatement(sqlInsert);
+			
+
+			albums = picture.getAlbums();
+			
+				for(String album: albums) {
+										
+					pst.setString(1, album);
+					pst.setBytes(2, picture.getPictureInByteArray());
+					pst.setString(3, picture.getDate());
+						
+					pst.execute();
+
+				}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			
+		}
+			
+	}
 	
 	
 	public void createPicturesTableForTheUser(User user) {

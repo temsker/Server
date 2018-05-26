@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 
 import com.tekapic.Login;
+import com.tekapic.Picture;
 import com.tekapic.User;
 
 public class SocketHandler extends Thread {
@@ -27,6 +28,9 @@ public class SocketHandler extends Thread {
 	    User user = null;
 	    Login login = null;
 	    String email = null;
+	    String stringFromUser = null;
+	    Picture picture = null;
+	    
 	    
 		try
 		{
@@ -73,18 +77,31 @@ public class SocketHandler extends Thread {
 	        		dataOutputStream.writeBytes(result + '\n');
 	        		
 	       		 	if(result.equals("2")) {
+	       		 		email = login.getEmail();
         			  while(true) {
         				 //in the client, now user in the profile activity.
         				 //if user goes back to login activity, need to send to here
         				 //some indication ("0")for break from this while loop
         				 //for example:
-        				    email = bufferedReader.readLine();
-        				  	if(email.equals("0")){
+        				    stringFromUser = bufferedReader.readLine();
+        				  	if(stringFromUser.equals("logOut")){
         				  		break;
         				  	}
-        				  	else {
+        				  	
+        				  	else if(stringFromUser.equals("getAccountDetails")) {
         				  		user = sql.getUserData(email); 
         				  		objectOutputStream.writeObject(user);
+        				  	}
+        				  	else if(stringFromUser.equals("storePicture")) {
+        				  		object = objectInputStream.readObject();
+        			        	  if(object instanceof Picture) {
+        			        		  picture = (Picture) object;
+        			        		  //System.out.println(picture.getDate());
+        			        		 sql.storePictureInUserTable(email, picture);        			        		    			         			        		 
+        			        	  }
+        				  	}
+        				  	else {
+        				  		
         				  	}
         				  
         				  
