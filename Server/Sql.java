@@ -19,10 +19,11 @@ public class Sql {
 
 	private  Connection connect;
 	
+	
 	public void storePictureInUserTable(String email, Picture picture) {
 		
 		String username = "none";
-		ArrayList<String> albums = new ArrayList<String>();
+		boolean albums[] = picture.getAlbums();
 		
 		
 		//get the username
@@ -41,30 +42,29 @@ public class Sql {
 		
 		//save the picture object in table user 
 		
-		String sqlInsert = "INSERT INTO " + username + " (album, picture, date) values (?,?,?)";
+		String sqlInsert = "INSERT INTO " + username + " (date, picture, me, family, friends, love, "
+				+ "pets, nature, sport, persons, animals, vehicles, views, food, things) values (?,?,?,"
+				+ "?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		
 			PreparedStatement pst = connect.prepareStatement(sqlInsert);
 			
-
-			albums = picture.getAlbums();
+							
+			pst.setString(1, picture.getDate());
+			pst.setBytes(2, picture.getPictureInByteArray());	
 			
-				for(String album: albums) {
-										
-					pst.setString(1, album);
-					pst.setBytes(2, picture.getPictureInByteArray());
-					pst.setString(3, picture.getDate());
+			for(int i = 3; i < (Picture.numberOfAlbums + 3); i++) {
+				pst.setBoolean(i, albums[i-3]);	
+			}
 						
-					pst.execute();
+			
+			pst.execute();
 
-				}
-			
-			
+	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
-			
+				
 		}
 			
 	}
@@ -72,7 +72,10 @@ public class Sql {
 	
 	public void createPicturesTableForTheUser(User user) {
 		
-		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(album VARCHAR(255) NULL,picture LONGBLOB NULL,date VARCHAR(255) NULL);";
+		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(date VARCHAR(255) NULL, picture LONGBLOB NULL, me tinyint(1) NULL,"
+				+ "family tinyint(1) NULL, friends tinyint(1) NULL, love tinyint(1) NULL, pets tinyint(1) NULL, nature tinyint(1) NULL,"
+				+ "sport tinyint(1) NULL, persons tinyint(1) NULL, animals tinyint(1) NULL, vehicles tinyint(1) NULL, "
+				+ "views tinyint(1) NULL, food tinyint(1) NULL, things tinyint(1) NULL);";
 		
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlCreateTable);
