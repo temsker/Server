@@ -20,13 +20,59 @@ public class Sql {
 	private  Connection connect;
 	
 	
-	public void storePictureInUserTable(String email, Picture picture) {
+	public ArrayList<Picture> getAllPictures(String email) {
 		
-		String username = "none";
-		boolean albums[] = picture.getAlbums();
-		
+        ArrayList<Picture> pictures = new ArrayList<Picture>();
+        String username = "none";
+        
 		
 		//get the username
+		username = findUsernameByeEmail(email);
+		
+		
+		
+		
+		try {
+			PreparedStatement statement = connect.prepareStatement("SELECT * FROM " + username);
+				
+			ResultSet result = statement.executeQuery();
+			
+			while(result.next())
+			{
+				byte[] imageBytes = result.getBytes(2);
+				
+				
+				Picture picture = new Picture();
+				picture.setPictureInByteArray(imageBytes);
+				
+				pictures.add(picture);
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+        
+        return pictures;
+		
+	}   
+	
+	public String findUsernameByeEmail(String email) {
+		String username = "none";
+		
+	
 		try {
 			
 			PreparedStatement statement = connect.prepareStatement("SELECT username  FROM users WHERE email = '" + email  + "';");                        
@@ -38,13 +84,34 @@ public class Sql {
 			   username = result.getString(1);
 				
 			}
-			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+				
+		}
 		
+		
+		return username;
+	}
+	
+	
+	public void storePictureInUserTable(String email, Picture picture) {
+		
+		String username = "none";
+		boolean albums[] = picture.getAlbums();
+		
+		
+		//get the username
+		username = findUsernameByeEmail(email);
+		
+		try {
+			
+
 		//save the picture object in table user 
 		
 		String sqlInsert = "INSERT INTO " + username + " (date, picture, me, family, friends, love, "
-				+ "pets, nature, sport, persons, animals, vehicles, views, food, things) values (?,?,?,"
-				+ "?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "pets, nature, sport, persons, animals, vehicles, views, food, things, funny) values (?,?,?,"
+				+ "?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		
 		
 			PreparedStatement pst = connect.prepareStatement(sqlInsert);
@@ -75,7 +142,7 @@ public class Sql {
 		String sqlCreateTable = "CREATE TABLE " + user.getUsername() + "(date VARCHAR(255) NULL, picture LONGBLOB NULL, me tinyint(1) NULL,"
 				+ "family tinyint(1) NULL, friends tinyint(1) NULL, love tinyint(1) NULL, pets tinyint(1) NULL, nature tinyint(1) NULL,"
 				+ "sport tinyint(1) NULL, persons tinyint(1) NULL, animals tinyint(1) NULL, vehicles tinyint(1) NULL, "
-				+ "views tinyint(1) NULL, food tinyint(1) NULL, things tinyint(1) NULL);";
+				+ "views tinyint(1) NULL, food tinyint(1) NULL, things tinyint(1) NULL, funny tinyint(1) NULL);";
 		
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlCreateTable);

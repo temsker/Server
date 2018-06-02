@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.ArrayList;
 
 import com.tekapic.Login;
 import com.tekapic.Picture;
@@ -99,6 +100,10 @@ public class SocketHandler extends Thread {
         			        		  //System.out.println(picture.getDate());
         			        		 sql.storePictureInUserTable(email, picture);        			        		    			         			        		 
         			        	  }
+        				  	}
+        				  	else if(stringFromUser.equals("showAllPictures")) {
+        				  		ArrayList<Picture> pictures = sql.getAllPictures(email);   
+        				  		objectOutputStream.writeObject(pictures);
         				  	}
         				  	else {
         				  		
