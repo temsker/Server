@@ -102,9 +102,26 @@ public class SocketHandler extends Thread {
         			        	  }
         				  	}
         				  	else if(stringFromUser.equals("showAllPictures")) {
-        				  		ArrayList<Picture> pictures = sql.getAllPictures(email);   
+        				  		ArrayList<Picture> pictures = sql.getPictures(email, "");   
         				  		objectOutputStream.writeObject(pictures);
         				  	}
+        				  	else if(stringFromUser.equals("showAlbums")) {
+        				  		ArrayList<String> albums = sql.getAlbums(email);   
+        				  		objectOutputStream.writeObject(albums);
+        				  		
+        				  		String album = "";
+        				  		do {
+       	      				     album = bufferedReader.readLine();
+
+               				    if((!album.equals("albumNotSelected"))) {
+               				  		ArrayList<Picture> pictures = sql.getPictures(email, album);   
+               				  		objectOutputStream.writeObject(pictures);
+               				     }
+        				  		}while((!album.equals("albumNotSelected")));
+        		
+  		
+        				  	}
+        	
         				  	else {
         				  		
         				  	}

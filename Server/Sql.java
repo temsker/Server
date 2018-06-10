@@ -20,20 +20,69 @@ public class Sql {
 	private  Connection connect;
 	
 	
-	public ArrayList<Picture> getAllPictures(String email) {
+	public ArrayList<String> getAlbums(String email) {
+		
+		String username;
+		String album[] = {"me", "family", "friends", "love", 
+		"pets", "nature", "sport", "persons", "animals", "vehicles", "views", "food", "things", "funny"};
+		
+		ArrayList<String> albums = new ArrayList<String>();
+		PreparedStatement statement = null;	
+		
+		username = findUsernameByeEmail(email);
+		
+		for(int i = 0; i < album.length; i++) {
+			
+			try {
+				statement = connect.prepareStatement("SELECT " + album[i] + " FROM " + username);
+				
+				ResultSet result = statement.executeQuery();
+				
+				while(result.next())
+				{
+				  if(result.getBoolean(1) == true) {
+					  albums.add(album[i]);
+					  break;
+				  }	
+					
+				}
+				
+				
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+		return albums;
+		
+	}
+	
+	
+	
+	public ArrayList<Picture> getPictures(String email, String album) {
 		
         ArrayList<Picture> pictures = new ArrayList<Picture>();
         String username = "none";
-        
+        PreparedStatement statement = null;
 		
 		//get the username
 		username = findUsernameByeEmail(email);
 		
-		
-		
+				
 		
 		try {
-			PreparedStatement statement = connect.prepareStatement("SELECT * FROM " + username);
+			
+			if(album.isEmpty()) {
+				 statement = connect.prepareStatement("SELECT * FROM " + username);
+			}
+			else {
+				statement = connect.prepareStatement("SELECT * FROM " + username + " WHERE " + album + " = true");
+			}
 				
 			ResultSet result = statement.executeQuery();
 			
@@ -54,17 +103,7 @@ public class Sql {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-        
+    
         return pictures;
 		
 	}   
